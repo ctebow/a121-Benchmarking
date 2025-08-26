@@ -5,7 +5,7 @@
 SparkFunXM125Distance radarSensor;
 
 // for python
-bool measuring = true;
+bool measuring = false;
 
 uint8_t i2cAddress = SFE_XM125_I2C_ADDRESS;
 uint32_t startVal = 0;
@@ -75,7 +75,8 @@ void setup()
         Serial.print("Detector status error: ");
         Serial.println(errorStatus);
     }
-    Serial.println();
+    Serial.println("Measuring Status: ");
+    Serial.print(measuring)
     delay(1000);
 }
 
@@ -112,8 +113,8 @@ void loop()
 
                 Serial.print("  Strength: ");
                 Serial.println(strengths[i]);
-        }
-    }
+            }
+        }   
 
     }
     // Half a second delay for easier readings
