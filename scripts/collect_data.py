@@ -91,7 +91,7 @@ def get_reading(file, num_trials, serialCom, trial):
             s_bytes = serialCom.readline()
             decoded_bytes = s_bytes.decode("utf-8").strip('\r\n')
             values = [float(x) for x in decoded_bytes.split()]
-            row = [trial, values[0], values[1], values[2], 300 - 2 * trial]
+            row = [trial, values[0], values[1], values[2], 300 - 10 * trial]
             writer.writerow(row)
             print(values)
         except:
