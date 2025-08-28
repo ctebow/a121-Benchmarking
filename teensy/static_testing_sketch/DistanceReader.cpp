@@ -40,6 +40,11 @@ void checkErrorsAndStart(SparkFunXM125Distance &sensor, uint32_t &errorStatus,
         Serial.println("Calibration Needed - Recalibrating.. ");
         // Calibrate device (write RECALIBRATE command)
         sensor.setCommand(SFE_XM125_DISTANCE_RECALIBRATE);
+        // Wait for calibration to complete, which can be slow
+        if (sensor.busyWait() != 0)  {
+            Serial.println("Busy wait error during calibration");
+        }
+        Serial.println("Recalibration complete.");
   }
 }
 

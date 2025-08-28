@@ -39,6 +39,10 @@ uint32_t distancePeak8 = 0;
 uint32_t distancePeak9 = 0;
 
 
+// Buffer for reading serial commands safely
+static char cmd_buffer[16];
+static uint8_t cmd_index = 0;
+
 void setup()
 {
     // Start serial, Initialize Sensor
@@ -59,10 +63,10 @@ void setup()
 
     // get temperature
     if (radarSensor.getTemperature(temperature) != 0) {
-        print("Temperature reading failed");
+        Serial.print("Temperature reading failed");
     }
-    println("Tempurature: ");
-    print(temperature);
+    Serial.println("Tempurature: ");
+    Serial.print(temperature);
 
     // Poll detector status until busy bit is cleared
     if (radarSensor.busyWait() != 0) {
@@ -76,18 +80,39 @@ void setup()
         Serial.println(errorStatus);
     }
     Serial.println("Measuring Status: ");
-    Serial.print(measuring)
+    Serial.print(measuring);
     delay(1000);
 }
 
 void loop()
 {
 
-    if (Serial.available()) {
-        String cmd = Serial.readStringUntil('\n');
-        cmd.trim();
-        if (cmd == "START") measuring = true;
-        else if (cmd == "STOP") measuring = false;
+    // Non-blocking, memory-safe serial command reading
+    while (Serial.available() > 0) {
+        char incoming_char = Serial.read();
+
+        // Handle command terminator ('\n')
+        if (incoming_char == '\n') {
+            cmd_buffer[cmd_index] = '\0'; // Null-terminate the C-string
+
+            if (strcmp(cmd_buffer, "START") == 0) {
+                measuring = true;
+            } else if (strcmp(cmd_buffer, "STOP") == 0) {
+                measuring = false;
+            }
+
+            cmd_index = 0; // Reset for the next command
+        }
+        // Ignore carriage returns
+        else if (incoming_char == '\r') {
+            // Do nothing
+        }
+        // Add character to buffer
+        else {
+            if (cmd_index < (sizeof(cmd_buffer) - 1)) {
+                cmd_buffer[cmd_index++] = incoming_char;
+            }
+        }
     }
 
     if (measuring) {
@@ -105,18 +130,15 @@ void loop()
 
         for (int i = 0; i < 10; i++) {
             if (distances[i] != 0) {
-                Serial.print("Object Detected: Peak");
                 Serial.print(i);
-                Serial.print(" Distance: ");
+                Serial.print(" ");
                 Serial.print(distances[i]);
-                Serial.print(" mm");
-
-                Serial.print("  Strength: ");
+                Serial.print(" ");
                 Serial.println(strengths[i]);
             }
         }   
 
     }
     // Half a second delay for easier readings
-    delay(500);
+    delay(200);
 }
