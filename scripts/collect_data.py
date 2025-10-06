@@ -42,6 +42,13 @@ def main():
                     time.sleep(1)
                 k += 1
     else:
+
+        print("Starting single trial")
+        if TRIAL == 0:
+            with open(FILE, "w", newline="") as f:
+                writer = csv.writer(f, delimiter=",")
+                writer.writerow(["trialNum", "resgister", "reading", "strength", "expected"])
+
         with open(FILE, "a", newline="") as f:
             serialCom = open_serial()
             get_reading(f, NUM_TRIALS_PER, serialCom, TRIAL)
@@ -91,7 +98,7 @@ def get_reading(file, num_trials, serialCom, trial):
             s_bytes = serialCom.readline()
             decoded_bytes = s_bytes.decode("utf-8").strip('\r\n')
             values = [float(x) for x in decoded_bytes.split()]
-            row = [trial, values[0], values[1], values[2], 200 - 10 * trial]
+            row = [trial, values[0], values[1], values[2], 50 - 2 * trial]
             writer.writerow(row)
             print(values)
         except:
