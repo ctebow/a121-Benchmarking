@@ -3,7 +3,7 @@
 
 // --- Configuration constants ---
 const uint32_t START_DIST = 30;    // mm
-const uint32_t END_DIST = 1000;  // mm
+const uint32_t END_DIST = 300;  // mm
 const uint32_t MAX_STEP_LENGTH = 0;  // 0 = auto based on profile
 const uint32_t MAX_PROFILE  = XM125_DISTANCE_PROFILE5;
 const bool     CLOSE_RANGE_LEAKAGE_CANCELLATION = true;

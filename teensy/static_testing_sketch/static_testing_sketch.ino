@@ -87,13 +87,11 @@ void setup()
 void loop()
 {
 
-    // Non-blocking, memory-safe serial command reading
     while (Serial.available() > 0) {
         char incoming_char = Serial.read();
 
-        // Handle command terminator ('\n')
         if (incoming_char == '\n') {
-            cmd_buffer[cmd_index] = '\0'; // Null-terminate the C-string
+            cmd_buffer[cmd_index] = '\0';
 
             if (strcmp(cmd_buffer, "START") == 0) {
                 measuring = true;
@@ -101,7 +99,7 @@ void loop()
                 measuring = false;
             }
 
-            cmd_index = 0; // Reset for the next command
+            cmd_index = 0; 
         }
         // Ignore carriage returns
         else if (incoming_char == '\r') {
